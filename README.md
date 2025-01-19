@@ -1,10 +1,13 @@
-# Máquina De Escrever 3D OpenGL coom GLUT 
+# Máquina De Escrever 3D OpenGL com GLUT 
 
 ## Funcionalidades
 
 F1 : Move a parte móvel para a direita.
+
 F2 : Move a folha para cima. (Rotaciona a roda da direita)
+
 F3 : Move a folha para baixo. (Rotaciona a roda da direita)
+
 
 Setas do teclado ajustam a angulação da câmera.
 
