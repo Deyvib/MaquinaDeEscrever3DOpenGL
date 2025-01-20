@@ -18,7 +18,8 @@ Teclas númericas e alfabéticas são inseridas na folha da Máquina De Escrever
 Instale GLEW e GLUT para compilar o projeto, caso tenha dificuldades para compilar no Windows, instale o WSL para emular o ambiente Linux no Windows, instale GLEW e GLUT lá e compile.
 
 Ou baixe o MSYS e instale o MINGW64 e abra o terminal MSYS MINGW64
-Execute o comando:
+
+No terminal MINGW64, execute o comando:
 
 ``` pacman -S mingw-w64-x86_64-glew mingw-w64-x86_64-glfw mingw-w64-x86_64-freeglut mingw-w64-x86_64-glm ``` 
 
