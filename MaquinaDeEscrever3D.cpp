@@ -18,7 +18,7 @@ GLint location_attribute_0, location_viewport;
 
 float angX = -45.0, angY = 0.0; // Ângulos de rotação para a camera
 GLUquadricObj *planet;
-bool aperto, teclando;
+bool aperto, teclando, vermelho;
 
 // Estrutura para representar uma tecla
 struct Tecla
@@ -26,6 +26,7 @@ struct Tecla
     char letra;
     double x, y, z;   // Coordenadas
     bool pressionada; // Indica se a tecla está pressionada
+    double r, g, b;
 };
 
 struct Carimbo
@@ -86,7 +87,7 @@ void DesenhaTecla(float x, float y, float z, bool pressionada)
 }
 
 // Função para desenhar texto em 3D
-void DesenharTexto3D(float x, float y, float z, const char *texto, bool naFolha = false, bool pressionada = false)
+void DesenharTexto3D(float x, float y, float z, const char *texto, bool naFolha, bool pressionada, double r, double g, double b)
 {
     glLineWidth(1);
     glPushMatrix();
@@ -96,7 +97,7 @@ void DesenharTexto3D(float x, float y, float z, const char *texto, bool naFolha 
     if (naFolha)
     {
         glRotatef(75, 1.0, 0.0, 0.0);
-        glUniform3f(objectColorLoc, 0.0, 0.0, 0.0);
+        glUniform3f(objectColorLoc, r, g, b);
         glTranslatef(0.0f, 0.1f, -0.33f);
         glScalef(0.0008f, 0.0008f, 0.0008f); // Modifica o tamanho das letras da folha
     }
@@ -124,7 +125,7 @@ void DesenharTextoNaFolha()
     {
         if (letra.z > 0.74)
         { // Condição para desenhar a letra, se baixo demais, ignore
-            DesenharTexto3D(letra.x, letra.y, letra.z, std::string(1, letra.letra).c_str(), true, false);
+            DesenharTexto3D(letra.x, letra.y, letra.z, std::string(1, letra.letra).c_str(), true, false, letra.r, letra.g, letra.b);
         }
     }
 }
@@ -314,9 +315,17 @@ void DesenhaFita()
     float yPeak = 3.4f;          // Altura máxima no centro
     float largura = 0.1f;        // Largura da fita
 
-    glUniform3f(objectColorLoc, 0.1f, 0.1f, 0.1f);     // Cor preta
-    glTranslatef(0.0, 1.15, (teclando ? -0.3 : -0.4)); // Ajusta a posição inicial
-    glRotatef(80, 1, 0, 0);                            // Inclina a fita para visualização
+    glUniform3f(objectColorLoc, 0.1f, 0.1f, 0.1f); // Cor preta
+    if (vermelho)
+    {
+
+        glTranslatef(0.0, 1.29, (teclando ? -0.25 : -0.45)); // Ajusta a posição inicial
+    }
+    else
+    {
+        glTranslatef(0.0, 1.29, (teclando ? -0.35 : -0.5)); // Ajusta a posição inicial
+    }
+    glRotatef(85, 1, 0, 0); // Inclina a fita para visualização
 
     glBegin(GL_TRIANGLE_STRIP);
     for (float t = -0.1f; t <= 1.1f; t += 0.04f)
@@ -326,6 +335,18 @@ void DesenhaFita()
 
         // Elevação parabólica para o Y
         float y = (1 - t) * yBase + t * yBase + t * (1 - t) * (yPeak - yBase);
+
+        // Ajustes nos extremos para conectar aos carretéis
+        if (t <= 0.15f) // Extremo esquerdo
+        {
+            z += (0.1f - t) * 1.4f; // Projeta o extremo para trás
+            x -= (0.1f - t) * 0.2f; // Move para a direção do carretel esquerdo
+        }
+        else if (t >= 0.85f) // Extremo direito
+        {
+            z += (t - 0.9f) * 1.4f; // Projeta o extremo para trás
+            x += (t - 0.9f) * 0.2f; // Move para a direção do carretel direito
+        }
 
         // Curvatura adicional no eixo Z para empurrar a fita "para fora"
         float curvaturaZ = sin(t * 3.14159) * 0.4f;
@@ -344,6 +365,68 @@ void DesenhaFita()
 
     glPopMatrix();
 }
+
+void DesenhaFita2()
+{
+    glPushMatrix();
+
+    // Coordenadas dos carretéis
+    float x1 = -1.0f, z1 = 0.1f; // Carretel esquerdo
+    float x2 = 1.0f, z2 = 0.1f;  // Carretel direito
+    float yBase = 0.9f;          // Altura base dos carretéis
+    float yPeak = 3.4f;          // Altura máxima no centro
+    float largura = 0.1f;        // Largura da fita
+
+    glUniform3f(objectColorLoc, 1.0f, 0.0f, 0.0f); // Cor da fita
+    if (vermelho)
+    {
+        glTranslatef(0.0, 1.29, (teclando ? -0.35 : -0.55)); // Ajusta a posição inicial
+    }
+    else
+    {
+        glTranslatef(0.0, 1.29, (teclando ? -0.45 : -0.6)); // Ajusta a posição inicial
+    }
+    glRotatef(85, 1, 0, 0); // Inclina a fita para visualização
+
+    glBegin(GL_TRIANGLE_STRIP);
+    for (float t = -0.1f; t <= 1.1f; t += 0.04f)
+    {
+        float x = (1 - t) * x1 + t * x2;
+        float z = (1 - t) * z1 + t * z2;
+
+        // Elevação parabólica para o Y
+        float y = (1 - t) * yBase + t * yBase + t * (1 - t) * (yPeak - yBase);
+
+        // Ajustes nos extremos para conectar aos carretéis
+        if (t <= 0.15f) // Extremo esquerdo
+        {
+            z += (0.1f - t) * 1.4f; // Projeta o extremo para trás
+            x -= (0.1f - t) * 0.2f; // Move para a direção do carretel esquerdo
+        }
+        else if (t >= 0.85f) // Extremo direito
+        {
+            z += (t - 0.9f) * 1.4f; // Projeta o extremo para trás
+            x += (t - 0.9f) * 0.2f; // Move para a direção do carretel direito
+        }
+
+        // Curvatura adicional no eixo Z para empurrar a fita "para fora"
+        float curvaturaZ = sin(t * 3.14159) * 0.4f;
+        z -= curvaturaZ;
+
+        float curvaturaX = cos(t * 3.14159) * 0.1f; // Curvatura lateral
+        x += curvaturaX;
+
+        // Vetores para largura da fita
+        float dy = largura / 2.0f;
+
+        glVertex3f(x, y - dy, z);
+        glVertex3f(x, y + dy, z);
+    }
+    glEnd();
+
+    glPopMatrix();
+}
+
 // Função principal
 void Desenha(void)
 {
@@ -452,7 +535,10 @@ void Desenha(void)
                             teclas[i].z + 0.055,
                             std::string(1, teclas[i].letra).c_str(),
                             false,
-                            teclas[i].pressionada); // Texto usado no teclado
+                            teclas[i].pressionada,
+                            teclas[i].r,
+                            teclas[i].g,
+                            teclas[i].b); // Texto usado no teclado
         }
     }
 
@@ -517,11 +603,17 @@ void Desenha(void)
     glScalef(1.8, 1.8, 0.2);
     glutSolidSphere(0.21, 30, 30);
     glPopMatrix();
-
+    // Cilindro preto
     glPushMatrix();
     glUniform3f(objectColorLoc, 0.1f, 0.1f, 0.1f);
+    glTranslatef(-1.0, 0.9, 0.35);
+    gluCylinder(planet, 0.2, 0.2, 0.25, 100, 40);
+    glPopMatrix();
+    // Cilindro vermelho
+    glPushMatrix();
+    glUniform3f(objectColorLoc, 1.0f, 0.0f, 0.0f);
     glTranslatef(-1.0, 0.9, 0.1);
-    gluCylinder(planet, 0.12, 0.12, 0.5, 100, 40);
+    gluCylinder(planet, 0.2, 0.2, 0.25, 100, 40);
     glPopMatrix();
 
     // Carretel 2 Direito
@@ -540,16 +632,30 @@ void Desenha(void)
     glScalef(1.8, 1.8, 0.05);
     glutSolidSphere(0.21, 30, 30);
     glPopMatrix();
-
+    // Cilindro preto
     glPushMatrix();
     glUniform3f(objectColorLoc, 0.1f, 0.1f, 0.1f);
+    glTranslatef(1.0, 0.9, 0.35);
+    gluCylinder(planet, 0.2, 0.2, 0.25, 100, 40);
+    glPopMatrix();
+    // Cilindro vermelho
+    glPushMatrix();
+    glUniform3f(objectColorLoc, 1.0f, 0.0f, 0.0f);
     glTranslatef(1.0, 0.9, 0.1);
-    gluCylinder(planet, 0.12, 0.12, 0.5, 100, 40);
+    gluCylinder(planet, 0.2, 0.2, 0.25, 100, 40);
     glPopMatrix();
 
     // Cilindro subindo
     glPushMatrix();
-    glTranslatef(0.0, 0.0, (teclando ? 0.1 : 0.0));
+    if (vermelho)
+    {
+
+        glTranslatef(0.0, 0.0, (teclando ? 0.1 : -0.12));
+    }
+    else
+    {
+        glTranslatef(0.0, 0.0, (teclando ? 0.0 : -0.16));
+    }
     glPushMatrix();
     glUniform3f(objectColorLoc, 0.4f, 0.4f, 0.4f);
     glTranslatef(0.0, 1.7, 0.0);
@@ -581,7 +687,7 @@ void Desenha(void)
 
     // Cilindro 1 estático esquerdo
     glPushMatrix();
-    glTranslatef(-0.55, -0.2, -0.2);
+    glTranslatef(-0.6, -0.18, -0.3);
     glPushMatrix();
     glUniform3f(objectColorLoc, 0.4f, 0.4f, 0.4f);
     glTranslatef(0.0, 1.7, 0.0);
@@ -591,8 +697,8 @@ void Desenha(void)
     // Topo
     glPushMatrix();
 
-    glRotatef(-40, 0, 0, 1);
-    glTranslatef(-1.08, -0.4, 0.0);
+    glRotatef(90, 0, 0, 1);
+    glTranslatef(1.69, -1.7, 0.0);
 
     glPushMatrix();
     glUniform3f(objectColorLoc, 0.4, 0.4, 0.4);
@@ -621,7 +727,7 @@ void Desenha(void)
 
     // Cilindro 2 estático direito
     glPushMatrix();
-    glTranslatef(0.55, -0.2, -0.2);
+    glTranslatef(0.6, -0.18, -0.3);
     glPushMatrix();
     glUniform3f(objectColorLoc, 0.5f, 0.5f, 0.5f);
     glTranslatef(0.0, 1.7, 0.0);
@@ -631,8 +737,8 @@ void Desenha(void)
     // Topo
     glPushMatrix();
 
-    glRotatef(40, 0, 0, 1);
-    glTranslatef(1.08, -0.4, 0.0);
+    glRotatef(90, 0, 0, 1);
+    glTranslatef(1.69, -1.7, 0.0);
 
     glPushMatrix();
     glUniform3f(objectColorLoc, 0.5, 0.5, 0.5);
@@ -660,6 +766,7 @@ void Desenha(void)
     glPopMatrix();
 
     DesenhaFita();
+    DesenhaFita2();
 
     // Desenhando os carimbos
     glPushMatrix();
@@ -769,7 +876,10 @@ void Teclado(unsigned char key, int x, int y)
             }
             teclas[i].pressionada = true;
 
-            textoNaFolha.push_back({static_cast<char>(key), -1.3, 1.33, 0.9, true});
+            textoNaFolha.push_back({static_cast<char>(key), -1.3, 1.33, 0.9, true,
+                                    (vermelho ? 1.0 : 0.0),
+                                    (vermelho ? 0.0 : 0.0),
+                                    (vermelho ? 0.0 : 0.0)});
 
             if (key == 'm' || key == 'M') // Ajusta o deslocamento para algumas letras
             {
@@ -846,6 +956,19 @@ void TeclasEspeciaisUp(int key, int x, int y)
 // Função para tratar teclas especiais
 void TeclasEspeciais(int key, int x, int y)
 {
+
+    if (key == GLUT_KEY_F4)
+    {
+        if (vermelho)
+        {
+            vermelho = false;
+        }
+        else
+        {
+            vermelho = true;
+        }
+    }
+
     if (key == GLUT_KEY_F1 && deslocamentoX > 0.0)
     {
         aperto = true;
@@ -958,7 +1081,7 @@ void InicializaTeclas()
             {
                 offsetX = -1.0;
             }
-            teclas[index++] = {teclado[i][j], offsetX + j * 0.3, offsetY - i * 0.3, 0.4 - i * 0.1, false};
+            teclas[index++] = {teclado[i][j], offsetX + j * 0.3, offsetY - i * 0.3, 0.4 - i * 0.1, false, 1.0, 1.0, 1.0};
         }
     }
     teclas[index++] = {' ', 0.0, offsetY - 1.2, 0.1, false};
