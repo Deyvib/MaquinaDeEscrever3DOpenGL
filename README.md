@@ -1,5 +1,10 @@
 # Máquina De Escrever 3D OpenGL com GLUT 
 
+## Em funcionamento
+
+
+![Programa em execução](https://github.com/Deyvib/Modulos/blob/main/typperwritergif.gif?raw=true)
+
 ## Funcionalidades
 
 F1 : Move a parte móvel para a direita.
@@ -31,11 +36,6 @@ Para compilar use:
 Por fim rode o programa:
 
 ``` ./MaquinaDeEscrever3D.exe ```
-
-## Em funcionamento
-
-
-![Programa em execução](https://github.com/Deyvib/Modulos/blob/main/typperwritergif.gif?raw=true)
 
 
 
