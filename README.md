@@ -32,6 +32,10 @@ Por fim rode o programa:
 
 ``` ./MaquinaDeEscrever3D.exe ```
 
+## Em funcionamento
+
+![Programa em execução](https://i.imgur.com/dOXKD5x.gif)
+
 
 
 
