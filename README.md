@@ -35,7 +35,7 @@ Por fim rode o programa:
 ## Em funcionamento
 
 
-![Programa em execução](./Modulos/blob/main/typperwritergif.gif)
+![Programa em execução](https://github.com/Deyvib/Modulos/blob/main/typperwritergif.gif?raw=true)
 
 
 
