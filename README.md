@@ -35,7 +35,7 @@ Por fim rode o programa:
 ## Em funcionamento
 
 
-<img src="https://i.imgur.com/dOXKD5x.gif" alt="Programa em execução" width="600">
+![Programa em execução](./Modulos/blob/main/typperwritergif.gif)
 
 
 
