@@ -35,7 +35,7 @@ Por fim rode o programa:
 ## Em funcionamento
 
 
-![Programa em execução](https://i.imgur.com/dOXKD5x.gif)
+![Programa em execução](https://i.imgur.com/dOXKD5x.gif?noredirect)
 
 
 
